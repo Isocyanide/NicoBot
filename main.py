@@ -45,12 +45,13 @@ def anime_query(search, curr_page, per_page = 5):
 
 	anime_dict = {}
 	eng_dict = {}
-	for media in data['data']['Page']['media']:
-		anime_name = media['title']['romaji']
-		anime_eng = media['title']['english']
-		if anime_name not in anime_dict.keys() or media['id'] > anime_dict[anime_name]:
-			anime_dict[anime_name] = media['id']
-			eng_dict[anime_name] = anime_eng
+	if data['data']:
+		for media in data['data']['Page']['media']:
+			anime_name = media['title']['romaji']
+			anime_eng = media['title']['english']
+			if anime_name not in anime_dict.keys() or media['id'] > anime_dict[anime_name]:
+				anime_dict[anime_name] = media['id']
+				eng_dict[anime_name] = anime_eng
 
 	anime_list = list(anime_dict.keys())
 	return data, anime_list, anime_dict, eng_dict

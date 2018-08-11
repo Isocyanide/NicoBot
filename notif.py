@@ -49,9 +49,10 @@ def anime_query(times):
 	response = requests.post(url, json={'query': query, 'variables': variables})
 	data = response.json()
 
-	for schedules in data['data']['Page']['airingSchedules']:
-		mediaId= schedules['mediaId']
-		anime_list.append(mediaId)
+	if data['data']:
+		for schedules in data['data']['Page']['airingSchedules']:
+			mediaId= schedules['mediaId']
+			anime_list.append(mediaId)
 	return anime_list
 
 def today(anime):

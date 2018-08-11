@@ -9,7 +9,7 @@ url = 'https://graphql.anilist.co'
 def info_anime(anime_id):
 	query = '''
 	query($id: Int) {
-		Media(id : $id) {
+		Media(id : $id, type: ANIME) {
 			id
 			title {
 				romaji
@@ -31,7 +31,7 @@ def info_anime(anime_id):
 			description
 			coverImage{
 				medium
-                large
+				large
 			}
 			bannerImage
 			siteUrl
@@ -54,8 +54,11 @@ def info_anime(anime_id):
 
 	response = requests.post(url, json={'query': query, 'variables': variables})
 	data = response.json()
-	animeinfo=data['data']['Media']
-	return animeinfo
+	try:
+		animeinfo=data['data']['Media']
+		return animeinfo
+	except:
+		pass
 
 def genr(genre, curr_page,per_page=5):
 	query = '''
@@ -96,3 +99,36 @@ def genr(genre, curr_page,per_page=5):
 
 	anime_list = list(anime_dict.keys())
 	return data, anime_list, anime_dict, eng_dict
+
+def characters(name):
+	query='''
+	query($name:String)
+	{
+		Character(search:$name){
+			name{
+				first
+				last
+			}
+			image{
+				large
+				medium
+			}
+			description
+		}
+	}
+	'''
+	variables = {
+		'name':name
+	}
+
+	response = requests.post(url, json={'query': query, 'variables': variables})
+	data = response.json()
+
+	if data['data']:
+		chr_info=data['data']['Character']
+		name=chr_info['name']['first']+" "+chr_info['name']['last']
+		image=chr_info['image']['large']
+		description=chr_info['description']
+		if len(description)>400:
+			description=description[:400]
+	return f'Name : {name}\nDescription : {description}\n{image}'
